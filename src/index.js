@@ -1,5 +1,5 @@
-const shajs = require('sha.js');
 const client = require('./client');
+const hash = require('string-hash');
 // const server = require('./server');
 
 // const IS_NODE = typeof module !== 'undefined' && this.module !== module;
@@ -38,58 +38,57 @@ function templateValueToJSX(value) {
  * @param {String[]} string parts
  * @return {Function}
  */
-function jsx(strings, ...values) {
-  let output = '';
-  let index = 0;
-  let propsMap = {};
+function jsx(vdom, componentMap) {
+  const h = vdom.h || vdom.createElement || vdom;
 
-  for (index = 0; index < values.length; index++) {
-    let value = values[index];
-    let valueString;
+  return function (strings, ...values) {
+    let output = '';
+    let index = 0;
+    let propsMap = {};
 
-    if (typeof value !== 'string') {
-      let propPlaceholder = getPropPlaceholder(value);
+    for (index = 0; index < values.length; index++) {
+      let value = values[index];
+      let valueString;
 
-      propsMap[propPlaceholder] = value;
+      if (typeof value !== 'string') {
+        let propPlaceholder = getPropPlaceholder(value);
 
-      valueString = propPlaceholder;
+        propsMap[propPlaceholder] = value;
+
+        valueString = propPlaceholder;
+      }
+
+      if (valueString === undefined) {
+        valueString = templateValueToJSX(value);
+      }
+
+      output += strings[index] + valueString;
     }
 
-    if (valueString === undefined) {
-      valueString = templateValueToJSX(value);
-    }
+    output += strings[index];
 
-    output += strings[index] + valueString;
-  }
-
-  output += strings[index];
-
-  output = output.trimRight();
-
-  return jsxTmplResult(output, propsMap);
+    output = output.trimRight();
+  
+    return jsxTmplResult(output, propsMap, h, componentMap);
+  };
 }
 
 /**
  * Return render function for components
  */
-function jsxTmplResult(output, propsMap) {
-  let tmplHash = shajs('sha256').update(output).digest('hex');
+function jsxTmplResult(output, propsMap, h, componentMap) {
+  let tmplHash = hash(output);
+  if (tmplCache[tmplHash] !== undefined) {
+    tmplCache[tmplHash].fromCache = true;
+    return tmplCache[tmplHash];
+  }
 
-  return function(vdom, componentMap) {
-    const h = vdom.h || vdom.createElement || vdom;
+  let result = client.render(h, output, propsMap, componentMap).shift();
 
-    if (tmplCache[tmplHash] !== undefined) {
-      tmplCache[tmplHash].fromCache = true;
-      return tmplCache[tmplHash];
-    }
+  // Add to cache
+  tmplCache[tmplHash] = result;
 
-    let result = client.render(h, output, propsMap, componentMap);
-
-    // Add to cache
-    tmplCache[tmplHash] = result;
-
-    return result;
-  };
+  return result;
 }
 
 /**

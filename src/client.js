@@ -1,5 +1,7 @@
-const htmlparser = require('htmlparser2');
+const Document = require('nano-dom');
 let tagKey = 0;
+const NODE_TYPE_TAG = 1;
+const NODE_TYPE_TEXT = 3;
 
 /**
  * Render for the client (build a virtual DOM)
@@ -21,17 +23,8 @@ function render(h, html, propsMap = {}, componentMap = {}) {
  * @return {Object} HTML node hierarchy tree
  */
 function parseHTMLToDOM(html) {
-  let parseOptions = {
-    lowerCaseAttributeNames: false,
-    lowerCaseTags: false,
-  };
-
-  let handler = new htmlparser.DomHandler();
-  let parser = new htmlparser.Parser(handler, parseOptions);
-
-  parser.parseComplete(html, parseOptions);
-
-  return handler.dom;
+  let dom = new Document(html);
+  return dom.body.children;
 }
 
 /**
@@ -54,17 +47,15 @@ function traverseToVdom(h, obj, propsMap = {}, componentMap = {}) {
     return;
   }
 
-	var type = obj.type,
-		tagName = obj.name,
-		children = obj.children,
+	var type = obj.nodeType,
+		tagName = obj.tagName,
+		children = obj.childNodes,
 		comp;
 
-  delete obj.next;
-  delete obj.prev;
-  delete obj.parent;
+  delete obj.parentNode;
 
-	if (type == 'tag') {
-    let attributes = attrs(obj.attribs);
+	if (type == NODE_TYPE_TAG) {
+    let attributes = attrs(obj.attributes);
 
     // Map specified components to their respective passed-in React components by name
     let tagComponentKey = Object.keys(componentMap).find(key => key === tagName || key.toLowerCase() === tagName);
@@ -89,14 +80,14 @@ function traverseToVdom(h, obj, propsMap = {}, componentMap = {}) {
 
     // Check for placeholders in string children
     children = children.map(child => {
-      let data = child.data;
+      let data = child.nodeValue;
 
       if (typeof data !== 'string') {
         return child;
       }
 
       if (propsMap[data]) {
-        child.data = propsMap[data];
+        child.nodeValue = propsMap[data];
         delete propsMap[data];
       }
 
@@ -111,8 +102,8 @@ function traverseToVdom(h, obj, propsMap = {}, componentMap = {}) {
     let nodeChildren = children.map(c => traverseToVdom(h, c, propsMap, componentMap));
 
     comp = h(tagName, attributes, nodeChildren.length > 0 ? nodeChildren : null);
-	} else if (type == 'text' ) {
-		comp = replacePropsInTextNode(obj.data, propsMap);
+	} else if (type == NODE_TYPE_TEXT) {
+		comp = replacePropsInTextNode(obj.nodeValue, propsMap);
 	}
 
 	return comp;
@@ -165,8 +156,8 @@ function replacePropsInTextNode(text, props) {
  * @param {Object} obj
  * @return {Object}
  */
-function attrs(obj) {
-	if (isEmptyObject(obj)) {
+function attrs(attributes) {
+	if (isEmptyObject(attributes)) {
 		return {};
 	}
 
@@ -174,17 +165,15 @@ function attrs(obj) {
 		attribObj = {},
 		regularKeys = /(data-||aria-)?/;
 
-	for (key in obj) {
-		if (key == 'class') {
-			attribObj.className = obj[key];
-		} else if (key.match(regularKeys)[1]) {
-			attribObj[key] = obj[key];
-		} else if (key == 'for') {
-			attribObj.htmlFor = obj[key];
+  for (let index = 0, length = attributes.length, attribute; attribute = attributes[index], index < length; index += 1) {
+		if (attribute.name == 'class') {
+			attribObj.className = attribute.value;
+		} else if (attribute.name == 'for') {
+			attribObj.htmlFor = attribute.value;
 		} else {
-			attribObj[key] = obj[key];
+			attribObj[attribute.name] = attribute.value;
 		}
-	}
+  }
 
 	return attribObj;
 }

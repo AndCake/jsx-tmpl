@@ -26,13 +26,16 @@ const { jsx } = require('jsx-tmpl');
 const Greeting = require('./Greeting');
 const React = require('react');
 
+// Pass in React, and a hash of components used
+const html = jsx(React, {Greeting});
+
 class App extends React.PureComponent {
   render() {
-    return jsx`
+    return html`
       <div class="App">
         <Greeting name="John Doe" />
       </div>
-    `(React, { Greeting }); // Pass in React, and a hash of components used
+    `; 
   }
 }
 ```
@@ -46,15 +49,17 @@ const { jsx } = require('jsx-tmpl');
 const Greeting = require('./Greeting');
 const React = require('react');
 
+const html = jsx(React, {Greeting});
+
 class App extends React.PureComponent {
   render() {
     let name = "John Doe";
 
-    return jsx`
+    return html`
       <div class="App">
         <Greeting name=${name} />
       </div>
-    `(React, { Greeting }); // Pass in React, and a hash of components used
+    `; // Pass in React, and a hash of components used
   }
 }
 ```
@@ -69,15 +74,18 @@ library or React-compatible framework.
 const { jsx } = require('jsx-tmpl');
 const Preact = require('preact');
 
+// Pass in Preact instead of React!
+const html = jsx(Preact);
+
 class App extends Preact.Component {
   render() {
     let name = "John Doe";
 
-    return jsx`
+    return html`
       <div class="App">
         Hell World!
       </div>
-    `(Preact); // Pass in Preact instead of React!
+    `;
   }
 }
 ```

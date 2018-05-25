@@ -4,6 +4,8 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const { mount, shallow } = require('enzyme');
 
+const v = jsx(React);
+
 // Helpers
 const element = React.createElement;
 const toString = ReactDOMServer.renderToStaticMarkup;
@@ -11,23 +13,23 @@ const toString = ReactDOMServer.renderToStaticMarkup;
 describe('toJSX on client', () => {
 
   it('should convert a single HTML tag to JSX', () => {
-    let Component = () => jsx`<div>Test</div>`(React);
+    let Component = () => v`<div>Test</div>`;
     let wrapper = mount(element(Component));
 
     expect(wrapper.html()).toEqual('<div>Test</div>');
   });
 
   it('should convert a nested component tag to corresponding JSX', () => {
-    let ListItem = () => jsx`<li>List item</li>`(React);
-    let ParentComponent = () => jsx`<ul><ListItem key="listitem" /></ul>`(React, { ListItem });
+    let ListItem = () => v`<li>List item</li>`;
+    let ParentComponent = () => jsx(React, {ListItem})`<ul><ListItem key="listitem" /></ul>`;
     let wrapper = mount(element(ParentComponent));
 
     expect(wrapper.html()).toEqual('<ul><li>List item</li></ul>');
   });
 
   it('should pass "children" as props down to child components', () => {
-    let ListItem = (props) => jsx`<li>${props.children}</li>`(React);
-    let List = (props) => jsx`<ul><ListItem key="listitem">Test</ListItem></ul>`(React, { ListItem });
+    let ListItem = (props) => v`<li>${props.children}</li>`;
+    let List = (props) => jsx(React, {ListItem})`<ul><ListItem key="listitem">Test</ListItem></ul>`;
     let wrapper = mount(element(List));
 
     expect(wrapper.html()).toEqual('<ul><li>Test</li></ul>');
@@ -36,7 +38,7 @@ describe('toJSX on client', () => {
   it('should be able to handle a function onClick attribute', () => {
     let clickCount = 0;
     let onClick = () => ++clickCount;
-    let Component = () => jsx`<a id="link" onClick=${onClick}>Click Me</a>`(React);
+    let Component = () => v`<a id="link" onClick=${onClick}>Click Me</a>`;
     let wrapper = mount(element(Component));
 
     wrapper.find('#link').simulate('click');
@@ -48,7 +50,7 @@ describe('toJSX on client', () => {
     let actual;
     let expected = 2;
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx`<Component test=${expected} />`(React, { Component });
+    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
     let wrapper = mount(element(ParentComponent));
 
     expect(actual).toEqual(expected);
@@ -58,7 +60,7 @@ describe('toJSX on client', () => {
     let actual;
     let expected = false;
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx`<Component test=${expected} />`(React, { Component });
+    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
     let wrapper = mount(element(ParentComponent));
 
     expect(actual).toEqual(expected);
@@ -68,7 +70,7 @@ describe('toJSX on client', () => {
     let actual;
     let expected = { backgroundColor: 'blue' };
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx`<Component test=${expected} />`(React, { Component });
+    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
     let wrapper = mount(element(ParentComponent));
 
     expect(actual).toEqual(expected);
@@ -77,7 +79,7 @@ describe('toJSX on client', () => {
   it('should be able to handle object styles', () => {
     let actual;
     let expected = { backgroundColor: 'blue' };
-    let Component = () => jsx`<div style=${expected} />`(React);
+    let Component = () => v`<div style=${expected} />`;
     let wrapper = mount(element(Component));
 
     expect(wrapper.html()).toEqual('<div style="background-color: blue;"></div>');
@@ -88,7 +90,7 @@ describe('toJSX on client', () => {
       render() {
         let logo = 'img/logo.png';
 
-        return jsx`
+        return v`
           <div className="App">
             <header className="App-header">
               <img src=${logo} className="App-logo" alt="logo" />
@@ -98,7 +100,7 @@ describe('toJSX on client', () => {
               To get started, edit <code>src/App.js</code> and save to reload.
             </p>
           </div>
-        `(React);
+        `;
       }
     }
 
@@ -114,7 +116,7 @@ describe('React renderToStaticMarkup', () => {
   it('should render component to static markup', () => {
     let actual;
     let expected = { backgroundColor: 'blue' };
-    let Component = () => jsx`<div style=${expected} />`(React);
+    let Component = () => v`<div style=${expected} />`;
     let html = toString(element(Component));
 
     expect(html).toEqual('<div style="background-color:blue"></div>');
@@ -123,7 +125,7 @@ describe('React renderToStaticMarkup', () => {
   it('should render component to static markup that equals React.createElement()', () => {
     let actual;
     let expected = { backgroundColor: 'blue' };
-    let Component = () => jsx`<div style=${expected} />`(React);
+    let Component = () => v`<div style=${expected} />`;
     let Component2 = () => element('div', { style: expected });
     let html1 = toString(element(Component));
     let html2 = toString(element(Component2));
@@ -134,7 +136,7 @@ describe('React renderToStaticMarkup', () => {
   it('should render toString', () => {
     let actual;
     let expected = { backgroundColor: 'blue' };
-    let Component = () => jsx`<div style=${expected} />`(React);
+    let Component = () => v`<div style=${expected} />`;
     let html = toString(Component());
 
     expect(html).toEqual('<div style="background-color:blue"></div>');
@@ -144,7 +146,7 @@ describe('React renderToStaticMarkup', () => {
 describe('jsx render cache', () => {
 
   it('should render twice with different prop values (from cache 2nd time)', () => {
-    let renderFn = (props) => jsx`<div>Cache Test ${props.number}</div>`(React);
+    let renderFn = (props) => v`<div>Cache Test ${props.number}</div>`;
     let result1 = renderFn({ number: 1 }); // 1st call
     let result2 = renderFn({ number: 2 }); // 2nd call (should be from cache)
 
@@ -158,12 +160,11 @@ describe('jsx render cache', () => {
     let actual;
     let expected = false;
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx`<Component test=${expected} />`(React, { Component });
+    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
 
     mount(element(ParentComponent));
     mount(element(ParentComponent));
 
     expect(actual).toEqual(expected);
   });
-
 });
