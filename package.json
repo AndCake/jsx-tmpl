@@ -1,13 +1,13 @@
 {
   "name": "template2jsx",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Stop transpiling React components for Node with JSX templates, which use native es6 tagged template literals",
   "main": "dist/index.js",
   "module": "dist/index.min.es.js",
   "scripts": {
-    "bundle": "browserify src/index.js -o dist/index.js -s exported",
+    "bundle": "browserify src/index.js -o dist/index.js -s template2jsx",
     "minify": "uglifyjs -cm -o dist/index.min.js dist/index.js",
-    "es6ify": "echo 'let window = {};' > dist/index.min.es.js && cat dist/index.min.js >> dist/index.min.es.js && echo 'export const {jsx} = window.exported;' >> dist/index.min.es.js",
+    "es6ify": "echo 'let window = {};' > dist/index.min.es.js && cat dist/index.min.js >> dist/index.min.es.js && echo 'export const {getJSXTag} = window.template2jsx;' >> dist/index.min.es.js",
     "start": "npm run bundle && npm run minify && npm run es6ify",
     "test": "jest"
   },
