@@ -1,9 +1,5 @@
 const client = require('./client');
 const hash = require('string-hash');
-// const server = require('./server');
-
-// const IS_NODE = typeof module !== 'undefined' && this.module !== module;
-// const IS_BROWSER = !IS_NODE;
 
 /**
  * Parsed, compiled template functions are kept here and re-used for
@@ -35,10 +31,11 @@ function templateValueToJSX(value) {
 /**
  * ES6 tagged template literal function
  *
- * @param {String[]} string parts
- * @return {Function}
+ * @param {Function|Object} vdom the VDOM generating function or the Preact/React object
+ * @param {Object} componentMap the list of components used by the template literal
+ * @return {Function} the tagged template literal function
  */
-function jsx(vdom, componentMap) {
+function getJSXTag(vdom, componentMap) {
   const h = vdom.h || vdom.createElement || vdom;
 
   return function (strings, ...values) {
@@ -105,5 +102,5 @@ function getPropPlaceholder(value) {
 }
 
 module.exports = {
-  jsx,
+  getJSXTag,
 };

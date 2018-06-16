@@ -1,10 +1,10 @@
-const { jsx } = require('../src');
+const { getJSXTag } = require('../src');
 require('../src/testConfig'); // Enzyme setup
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const { mount, shallow } = require('enzyme');
 
-const v = jsx(React);
+const v = getJSXTag(React);
 
 // Helpers
 const element = React.createElement;
@@ -21,7 +21,7 @@ describe('toJSX on client', () => {
 
   it('should convert a nested component tag to corresponding JSX', () => {
     let ListItem = () => v`<li>List item</li>`;
-    let ParentComponent = () => jsx(React, {ListItem})`<ul><ListItem key="listitem" /></ul>`;
+    let ParentComponent = () => getJSXTag(React, {ListItem})`<ul><ListItem key="listitem" /></ul>`;
     let wrapper = mount(element(ParentComponent));
 
     expect(wrapper.html()).toEqual('<ul><li>List item</li></ul>');
@@ -29,7 +29,7 @@ describe('toJSX on client', () => {
 
   it('should pass "children" as props down to child components', () => {
     let ListItem = (props) => v`<li>${props.children}</li>`;
-    let List = (props) => jsx(React, {ListItem})`<ul><ListItem key="listitem">Test</ListItem></ul>`;
+    let List = (props) => getJSXTag(React, {ListItem})`<ul><ListItem key="listitem">Test</ListItem></ul>`;
     let wrapper = mount(element(List));
 
     expect(wrapper.html()).toEqual('<ul><li>Test</li></ul>');
@@ -50,7 +50,7 @@ describe('toJSX on client', () => {
     let actual;
     let expected = 2;
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
+    let ParentComponent = () => getJSXTag(React, {Component})`<Component test=${expected} />`;
     let wrapper = mount(element(ParentComponent));
 
     expect(actual).toEqual(expected);
@@ -60,7 +60,7 @@ describe('toJSX on client', () => {
     let actual;
     let expected = false;
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
+    let ParentComponent = () => getJSXTag(React, {Component})`<Component test=${expected} />`;
     let wrapper = mount(element(ParentComponent));
 
     expect(actual).toEqual(expected);
@@ -70,7 +70,7 @@ describe('toJSX on client', () => {
     let actual;
     let expected = { backgroundColor: 'blue' };
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
+    let ParentComponent = () => getJSXTag(React, {Component})`<Component test=${expected} />`;
     let wrapper = mount(element(ParentComponent));
 
     expect(actual).toEqual(expected);
@@ -160,7 +160,7 @@ describe('jsx render cache', () => {
     let actual;
     let expected = false;
     let Component = (props) => { actual = props.test; return null };
-    let ParentComponent = () => jsx(React, {Component})`<Component test=${expected} />`;
+    let ParentComponent = () => getJSXTag(React, {Component})`<Component test=${expected} />`;
 
     mount(element(ParentComponent));
     mount(element(ParentComponent));

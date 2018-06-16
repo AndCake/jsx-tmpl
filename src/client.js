@@ -6,7 +6,7 @@ const NODE_TYPE_TEXT = 3;
 /**
  * Render for the client (build a virtual DOM)
  *
- * @param {React|Preact|Inferno|vdom} h - Any React-compatable API or virtual dom
+ * @param {React|Preact|Inferno|vdom} h - Any React-compatible API or virtual dom
  * @param {string} html - HTML string to parse
  * @param {string} propsMap - Hash of prop { name: value } to replace on parse
  * @param {string} componentMap - Hash of components { name: Component } to replace  matching tagName with on parse
@@ -17,7 +17,7 @@ function render(h, html, propsMap = {}, componentMap = {}) {
 }
 
 /**
- * Parse HTML to DOM tree (via htmlparser2)
+ * Parse HTML to DOM tree (via nano-dom)
  *
  * @param {string} html - HTML string to parse
  * @return {Object} HTML node hierarchy tree

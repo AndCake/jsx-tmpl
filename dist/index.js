@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsx = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.exported = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -412,7 +412,7 @@ const NODE_TYPE_TEXT = 3;
 /**
  * Render for the client (build a virtual DOM)
  *
- * @param {React|Preact|Inferno|vdom} h - Any React-compatable API or virtual dom
+ * @param {React|Preact|Inferno|vdom} h - Any React-compatible API or virtual dom
  * @param {string} html - HTML string to parse
  * @param {string} propsMap - Hash of prop { name: value } to replace on parse
  * @param {string} componentMap - Hash of components { name: Component } to replace  matching tagName with on parse
@@ -423,7 +423,7 @@ function render(h, html, propsMap = {}, componentMap = {}) {
 }
 
 /**
- * Parse HTML to DOM tree (via htmlparser2)
+ * Parse HTML to DOM tree (via nano-dom)
  *
  * @param {string} html - HTML string to parse
  * @return {Object} HTML node hierarchy tree
@@ -601,10 +601,6 @@ module.exports = {
 },{"nano-dom":1}],4:[function(require,module,exports){
 const client = require('./client');
 const hash = require('string-hash');
-// const server = require('./server');
-
-// const IS_NODE = typeof module !== 'undefined' && this.module !== module;
-// const IS_BROWSER = !IS_NODE;
 
 /**
  * Parsed, compiled template functions are kept here and re-used for
@@ -636,10 +632,11 @@ function templateValueToJSX(value) {
 /**
  * ES6 tagged template literal function
  *
- * @param {String[]} string parts
- * @return {Function}
+ * @param {Function|Object} vdom the VDOM generating function or the Preact/React object
+ * @param {Object} componentMap the list of components used by the template literal
+ * @return {Function} the tagged template literal function
  */
-function jsx(vdom, componentMap) {
+function getJSXTag(vdom, componentMap) {
   const h = vdom.h || vdom.createElement || vdom;
 
   return function (strings, ...values) {
@@ -706,7 +703,7 @@ function getPropPlaceholder(value) {
 }
 
 module.exports = {
-  jsx,
+  getJSXTag,
 };
 
 },{"./client":3,"string-hash":2}]},{},[4])(4)

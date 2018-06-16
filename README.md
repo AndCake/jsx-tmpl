@@ -1,8 +1,7 @@
-# jsx-tmpl
-Build JSX using native ES6 templates. No transpiling required for Node.js and modern browsers.
+# Template to JSX
+Build a VDOM using native ES6 templates. No transpiling required for Node.js or modern browsers.
 
-* Returns strings for fast rendering on the server
-* Returns a full JSX virtual DOM on the client
+This library is based on Vance Luca's [jsx-tmpl](http://github.com/vlucas/jsx-tmpl). All credit for creating this library goes to him.
 
 ## Features
 
@@ -14,20 +13,20 @@ Build JSX using native ES6 templates. No transpiling required for Node.js and mo
 ## Installation
 
 ```
-npm i jsx-tmpl --save
+npm i template2jsx --save
 ```
 
 ## Usage
 
-Just use the `jsx` tagged template literal and write normal HTML markup inside native ES6 templates.
+Just use the `getJSXTag` function to generate a tagged template literal and write normal HTML markup inside native ES6 templates.
 
 ```javascript
-const { jsx } = require('jsx-tmpl');
+const { getJSXTag } = require('template2jsx');
 const Greeting = require('./Greeting');
 const React = require('react');
 
 // Pass in React, and a hash of components used
-const html = jsx(React, {Greeting});
+const html = getJSXTag(React, {Greeting});
 
 class App extends React.PureComponent {
   render() {
@@ -45,11 +44,11 @@ class App extends React.PureComponent {
 For dynamic props or rendering variables, use standard ES6 template interpolation:
 
 ```javascript
-const { jsx } = require('jsx-tmpl');
+const { getJSXTag } = require('template2jsx');
 const Greeting = require('./Greeting');
 const React = require('react');
 
-const html = jsx(React, {Greeting});
+const html = getJSXTag(React, {Greeting});
 
 class App extends React.PureComponent {
   render() {
@@ -71,11 +70,11 @@ can substitute it for [Preact](https://preactjs.com/), or any other virtual DOM
 library or React-compatible framework.
 
 ```javascript
-const { jsx } = require('jsx-tmpl');
+const { getJSXTag } = require('template2jsx');
 const Preact = require('preact');
 
 // Pass in Preact instead of React!
-const html = jsx(Preact);
+const html = getJSXTag(Preact);
 
 class App extends Preact.Component {
   render() {
