@@ -116,7 +116,7 @@ function replacePropsInTextNode(text, props) {
 
   propKeys.forEach(key => {
     if (text.includes(key)) {
-      keyParts = text.split(key);
+      let keyParts = text.split(key);
       keyParts.splice(1, 0, props[key]);
 
       textParts = textParts.concat(keyParts);
