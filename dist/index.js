@@ -464,11 +464,10 @@ function traverseToVdom(h, obj, propsMap = {}, componentMap = {}) {
     let attributes = attrs(obj.attributes);
 
     // Map specified components to their respective passed-in React components by name
-    let tagComponentKey = Object.keys(componentMap).find(key => key === tagName || key.toLowerCase() === tagName);
+    let tagComponentKey = Object.keys(componentMap).find(key => tagName.toLowerCase() === key.toLowerCase());
 
     if (tagComponentKey) {
       tagName = componentMap[tagComponentKey];
-      delete componentMap[tagComponentKey];
     }
 
     // Check props for things in propsMap
