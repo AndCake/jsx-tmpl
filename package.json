@@ -3,12 +3,11 @@
   "version": "1.3.5",
   "description": "Stop transpiling React components for Node with JSX templates, which use native es6 tagged template literals",
   "main": "dist/index.js",
-  "module": "dist/index.min.es.js",
+  "module": "dist/index.esm.js",
   "scripts": {
-    "bundle": "browserify src/index.js -o dist/index.js -s template2jsx",
-    "minify": "uglifyjs -cm -o dist/index.min.js dist/index.js",
-    "es6ify": "echo 'let window = {};' > dist/index.min.es.js && cat dist/index.min.js >> dist/index.min.es.js && echo 'export const {getJSXTag} = window.template2jsx;' >> dist/index.min.es.js",
-    "start": "npm run bundle && npm run minify && npm run es6ify",
+    "bundle": "rollup -c rollup.config.js",
+    "minify": "uglifyjs -cm -o dist/index.min.js dist/index.js && uglifyjs -cm -o dist/index.min.es.js dist/index.esm.js",
+    "start": "npm run bundle && npm run minify",
     "test": "jest"
   },
   "keywords": [
@@ -28,17 +27,19 @@
     "url": "http://github.com/AndCake/jsx-tmpl"
   },
   "devDependencies": {
-    "nano-dom": "^0.1.12",
-    "string-hash": "^1.1.3",
-    "browserify": "^16.2.2",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "jest": "^21.2.1",
     "jest-cli": "^23.0.0",
     "jest-environment-jsdom": "^23.0.0",
+    "nano-dom": "^0.1.12",
     "raf": "3.4.0",
     "react": "^16.0",
     "react-dom": "^16.0",
-    "uglify-es": "^3.3.9"    
+    "rollup": "^0.61.1",
+    "rollup-plugin-commonjs": "^9.1.3",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "string-hash": "^1.1.3",
+    "uglify-es": "^3.3.9"
   }
 }

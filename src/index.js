@@ -1,5 +1,5 @@
-const client = require('./client');
-const hash = require('string-hash');
+import * as client from './client';
+import hash from 'string-hash';
 
 /**
  * Parsed, compiled template functions are kept here and re-used for
@@ -96,11 +96,9 @@ function jsxTmplResult(output, propsMap, h, componentMap) {
  */
 let propIncrement = 0;
 function getPropPlaceholder(value) {
-  let propName = (value.name || value.constructor.name || typeof value) + '_' + ++propIncrement;
+  let propName = (value && (value.name || value.constructor.name) || typeof value) + '_' + ++propIncrement;
 
   return '[[' + propName + ']]';
 }
 
-module.exports = {
-  getJSXTag,
-};
+export {getJSXTag};

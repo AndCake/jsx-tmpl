@@ -1,7 +1,3 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function unwrapExports (x) {
@@ -707,4 +703,4 @@ function getPropPlaceholder(value) {
   return '[[' + propName + ']]';
 }
 
-exports.getJSXTag = getJSXTag;
+export { getJSXTag };
