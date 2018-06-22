@@ -1,6 +1,6 @@
 {
   "name": "template2jsx",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Stop transpiling React components for Node with JSX templates, which use native es6 tagged template literals",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
