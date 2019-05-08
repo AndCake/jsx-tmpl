@@ -95,7 +95,7 @@ function traverseToVdom(h, obj, propsMap = {}, componentMap = {}) {
 
     // Always use a key if not present
     if (attributes.key === undefined) {
-      attributes.key = '__jsx-tmpl-key-' + (++tagKey);
+//      attributes.key = '__jsx-tmpl-key-' + (++tagKey);
     }
 
     let nodeChildren = children.map(c => traverseToVdom(h, c, propsMap, componentMap));
